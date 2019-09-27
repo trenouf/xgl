@@ -451,6 +451,8 @@ VkResult CompilerSolutionLlpc::CreateLlpcCompiler()
     }
 
     ShaderCacheMode shaderCacheMode = settings.shaderCacheMode;
+#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION < 28
+    // From LLPC version 28, this is done in app_shader_optimizer instead.
     if ((appProfile == AppProfile::MadMax) ||
         (appProfile == AppProfile::SedpEngine) ||
         (appProfile == AppProfile::ThronesOfBritannia))
@@ -459,12 +461,6 @@ VkResult CompilerSolutionLlpc::CreateLlpcCompiler()
         // si-scheduler interacts badly with SIFormMemoryClauses pass, so
         // disable the effect of that pass by limiting clause length to 1.
         llpcOptions[numOptions++] = "-amdgpu-max-memory-clause=1";
-    }
-
-#if LLPC_CLIENT_INTERFACE_MAJOR_VERSION >= 33
-    if (appProfile == AppProfile::DawnOfWarIII)
-    {
-        llpcOptions[numOptions++] = "-enable-load-scalarizer";
     }
 #endif
 
